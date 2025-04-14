@@ -15,9 +15,9 @@ class WhatsAppService{
                     to: to,
                     text: { body: body },
                     // el context es para replicar a el mensaje (Dar responder)
-                    context: {
-                      message_id: messageId,
-                    },
+                    // context: {
+                    //   message_id: messageId,
+                    // },
                 },
             })
         } catch (error) {
@@ -65,7 +65,57 @@ class WhatsAppService{
                 },
             })
         } catch (error) {
-            console.log(error);
+            console.error(error);
+        }
+    }
+    async sendMediaMessage(to, type, mediaUrl, caption){
+        try {
+            const mediaObject = {}
+
+            switch (type) {
+                case 'image':
+                    mediaObject.image = {
+                        link: mediaUrl,
+                        caption: caption
+                    }
+                    break;
+                case 'audio':
+                    mediaObject.audio = {
+                        link: mediaUrl
+                    }
+                    break;
+                case 'video':
+                    mediaObject.video = {
+                        link: mediaUrl,
+                        caption: caption
+                    }
+                    break;
+                case 'document':
+                    mediaObject.document = {
+                        link: mediaUrl,
+                        caption: caption,
+                        filename: 'sir.pdf'
+                    }
+                    break;
+                default:
+                    throw new Error('Not Supported Media Type');
+            }
+
+            await axios({
+                method: "POST",
+                url: `https://graph.facebook.com/${config.API_VERSION}/${config.BUSINESS_PHONE}/messages`,
+                headers: {
+                    Authorization: `Bearer ${config.API_TOKEN}`,
+                },
+                data: {
+                    messaging_product: "whatsapp",
+                    to: to,
+                    type: type,
+                    ...mediaObject
+                },
+            })
+        } catch (error) {
+            console.error('Error sending Media',error);
         }
     }
 }
