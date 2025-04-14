@@ -6,6 +6,7 @@ class MessageHandler{
             const incomingMessage = message.text.body.toLowerCase().trim();
             if (this.isGreating(incomingMessage)) {
                 await this.sendWelcomeMessage(message.from, message.id, senderInfo);
+                await this.sendWelcomeMenu(message.from);
             }else{
                 const response = `Echo: ${message.text.body}`;
                 await whatsappService.sendMessage(message.from,response,message.id);
@@ -30,6 +31,25 @@ class MessageHandler{
         const welcomeMessage = `Hola ${firstName}, Bienvenido a Narnia.` + " ¿En qué puedo ayudarte hoy?";
         await whatsappService.sendMessage(to, welcomeMessage, messageId);
         await whatsappService.markAsRead(messageId);
+    }
+
+    async sendWelcomeMenu(to){
+        const menuMessage = "Elige una Opción";
+        const buttons = [
+            {
+                type: 'reply',
+                reply: { id: 'option_1', title: 'Agendar'}
+            },
+            {
+                type: 'reply',
+                reply: { id: 'option_2', title: 'Consultar'}
+            },
+            {
+                type: 'reply',
+                reply: { id: 'option_3', title: 'Ubicación'}
+            }
+        ];
+        await whatsappService.sendInteractiveButtons(to, menuMessage, buttons);
     }
 }
 
