@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../config/env";
+import config from "../config/env.js";
 
 class WhatsAppService{
     async sendMessage(to, body, messageId){
