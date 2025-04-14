@@ -7,6 +7,9 @@ class MessageHandler{
             if (this.isGreating(incomingMessage)) {
                 await this.sendWelcomeMessage(message.from, message.id, senderInfo);
                 await this.sendWelcomeMenu(message.from);
+            }else if(incomingMessage === 'media'){
+                await this.sendMedia(message.from);
+                await whatsappService.markAsRead(message.id);
             }else{
                 const response = `Echo: ${message.text.body}`;
                 await whatsappService.sendMessage(message.from,response,message.id);
@@ -74,6 +77,26 @@ class MessageHandler{
                 break;
         }
         await whatsappService.sendMessage(to,response);
+    }
+
+    async sendMedia(to){
+        const mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-audio.aac';
+        const caption = 'Bienvenida';
+        const type = 'audio'
+
+        // const mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-imagen.png';
+        // const caption = 'Esto es una imagen';
+        // const type = 'image'
+
+        // const mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-video.mp4';
+        // const caption = 'Esto es un video';
+        // const type = 'video'
+
+        // const mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-file.pdf';
+        // const caption = 'Esto es un pdf';
+        // const type = 'document'
+        await whatsappService.sendMediaMessage(to, type, mediaUrl, caption);
+
     }
 }
 
